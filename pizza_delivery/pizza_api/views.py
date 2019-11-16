@@ -9,7 +9,7 @@ from .serializers import OrdersSerializier, ItemSerializer, CustomerSerializer
 
 @csrf_exempt
 def orders_list(request):
-    """List all orders"""
+    """List all orders."""
 
     if request.method == 'GET':
         orders = Orders.objects.select_related().all()
@@ -17,27 +17,35 @@ def orders_list(request):
         return JsonResponse(serializer.data, safe=False)
 
 
+@csrf_exempt
+def customer_details(request, customer_id):
+    """Retrieve specific customer details."""
+
+    if request.method == 'GET':
+        customer = Customer.objects.select_related().get(pk=customer_id)
+        serializer = CustomerSerializer(customer, many=False)
+        return JsonResponse(serializer.data, safe=False)
 
 
-def index(request):
-    return HttpResponse("HW")
+@csrf_exempt
+def insert_order(request):
+    """Insert a new order."""
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = OrdersSerializier(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
 
 
-def order_pizza(request, order, customer):
-    # TODO get values out of order
-    return HttpResponse(f'{order}')
-# Create your views here.
-
-
-def delete_order(request, id):
-    # TODO lookup id and delete if possible
-    return HttpResponse(f'{id} deleted')
-
-
-def retrieve_order(request, id):
-    # TODO lookup id and return informations
-    order = id
-    return HttpResponse(f'{order}')
+@csrf_exempt
+def remove_order(request, order_id):
+    if request.method == 'POST':
+        order = Orders.objects.select_related().get(pk=order_id)
+        print(order)
+        serializer = OrdersSerializier(order, many=False)
+        return JsonResponse(serializer.data, safe=False)
 
 
 def retrieve_all_orders(request):
