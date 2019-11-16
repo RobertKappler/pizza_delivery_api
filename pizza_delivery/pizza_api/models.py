@@ -26,8 +26,7 @@ class Orders (models.Model):
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    customer_id = models.ForeignKey(Customer, related_name='customer', on_delete=models.CASCADE)
-    # status = models.CharField(max_length=150, choices=STATUS_CHOICES)
+    customer_id = models.ForeignKey(Customer, related_name='orders', on_delete=models.CASCADE)
     status = models.IntegerField(choices=STATUS_CHOICES)
     created_at = models.DateTimeField()
 
