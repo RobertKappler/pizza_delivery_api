@@ -24,7 +24,8 @@ class Orders (models.Model):
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    customer_id = models.ForeignKey(Customer, related_name='orders', on_delete=models.CASCADE)
+    customer_id = models.ForeignKey(Customer, related_name='orders',
+                                    on_delete=models.CASCADE)
     status = models.IntegerField(choices=STATUS_CHOICES)
     created_at = models.DateTimeField()
 
@@ -46,7 +47,8 @@ class Item(models.Model):
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    order_id = models.ForeignKey(Orders, related_name='items', on_delete=models.CASCADE)
+    order_id = models.ForeignKey(Orders, related_name='items',
+                                 on_delete=models.CASCADE)
     flavour = models.CharField(max_length=150, choices=FLAVOUR_CHOICES)
     quantity = models.IntegerField(default=1)
     size = models.IntegerField(choices=SIZE_CHOICES)
