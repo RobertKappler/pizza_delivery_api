@@ -46,8 +46,8 @@ class OrdersSerializier(serializers.ModelSerializer):
 
         if 'customer' in validated_data.keys():
             customer_validated_data = validated_data.pop('customer')
-            customer = Customer.objects.get(lastname=
-                                            customer_validated_data['lastname'])
+            customer = Customer.objects.get(
+                lastname=customer_validated_data['lastname'])
             if not customer:
                 customer = Customer.objects.create(**customer_validated_data)
             validated_data['customer_id'] = customer['id']
