@@ -39,16 +39,20 @@ class OrdersSerializier(serializers.ModelSerializer):
         fields = ['id', 'status', 'customer_id', 'items']
 
     def create(self, validated_data):
-        """Create a new order under consideration of status and the need to create a customer and new items."""
+        """
+        Create a new order under consideration of status and the need to
+        create a customer and new items.
+        """
 
         if 'customer' in validated_data.keys():
             customer_validated_data = validated_data.pop('customer')
-            customer = Customer.objects.get(lastname=customer_validated_data['lastname'])
+            customer = Customer.objects.get(lastname=
+                                            customer_validated_data['lastname'])
             if not customer:
                 customer = Customer.objects.create(**customer_validated_data)
             validated_data['customer_id'] = customer['id']
 
-        if not 'status' in validated_data.keys():
+        if 'status' not in validated_data.keys():
             validated_data['status'] = 0
 
         item_validated_data = validated_data.pop('items')
@@ -57,7 +61,7 @@ class OrdersSerializier(serializers.ModelSerializer):
 
         for each in item_validated_data:
             each['order_id'] = order
-            items = Item.objects.create(**each)
+            Item.objects.create(**each)
 
         return order
 
