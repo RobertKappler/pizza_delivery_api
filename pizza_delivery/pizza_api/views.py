@@ -18,7 +18,8 @@ class OrderList(ListAPIView):
         query_status = self.request.query_params.get('status', None)
         query_customer_id = self.request.query_params.get('customer_id', None)
         if query_status and query_customer_id:
-            queryset = Orders.objects.filter(status=query_status, customer_id=query_customer_id)
+            queryset = Orders.objects.filter(status=query_status,
+                                             customer_id=query_customer_id)
         elif query_status:
             queryset = Orders.objects.filter(status=query_status)
         elif query_customer_id:
@@ -64,36 +65,45 @@ class OrderDetails(APIView):
         if 'id' in all_data.keys():
             existing_order = self.get_order(all_data['id'])
             if existing_order.status > 1:
-                return JsonResponse({'Error': 'Can`t change orderdetails becauser the state of the '
+                return JsonResponse({'Error': 'Can`t change order details '
+                                              'because the state of the '
                                               'delivery process too advanced'})
 
         # get customer_id out of customer details - create new or get existing
         elif 'customer' in all_data.keys():
             cus_data = all_data['customer']
-            existing_cus = CustomerDetails().get_customer_by_name_and_address(cus_data['lastname'], cus_data['name'],
-                                                                  cus_data['address'])
+            existing_cus = CustomerDetails().get_customer_by_name_and_address(
+                cus_data['lastname'], cus_data['name'], cus_data['address'])
             if existing_cus:
                 all_data['customer_id'] = existing_cus.id
             else:
-                cus_serializer = CustomerSerializer(None, data=all_data['customer'], partial=True)
+                cus_serializer = CustomerSerializer(None, data=all_data[
+                    'customer'], partial=True)
                 if cus_serializer.is_valid():
                     saved_cus = cus_serializer.save()
                     all_data['customer_id'] = saved_cus.id
 
         # check its a new order and no customer information are provided
         elif 'customer_id' not in all_data.keys():
-            return JsonResponse({'Error': 'Can`t create an order without any customer information are given. Please '
-                                          'enter customer information or a customer_id.'})
+            return JsonResponse({'Error': 'Can`t create an order without any '
+                                          'customer information are given. '
+                                          'Please enter customer information '
+                                          'or a customer_id.'})
 
-        serializer = OrdersSerializier(existing_order, data=all_data, partial=True)
+        serializer = OrdersSerializier(existing_order, data=all_data,
+                                       partial=True)
 
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST, safe=False)
+        return JsonResponse(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST, safe=False)
 
     def delete(self, request, orderid):
-        """Delete order details and check if these is the last order for this customer."""
+        """
+        Delete order details and check if these is the last order for
+        this customer.
+        """
 
         order = self.get_order(orderid)
         if not self.get_order_by_customerid(order.customer_id):
@@ -115,10 +125,13 @@ class CustomerDetails(APIView):
             raise Http404
 
     def get_customer_by_name_and_address(self, lastname, name, address):
-        """Lookup if customer details are already available, based on lastname, name, address."""
+        """
+        Lookup if customer details are already available, based on
+        lastname, name, address."""
 
         try:
-            return Customer.objects.get(lastname=lastname, name=name, address=address)
+            return Customer.objects.get(lastname=lastname, name=name,
+                                        address=address)
         except Customer.DoesNotExist:
             return None
 
@@ -133,11 +146,13 @@ class CustomerDetails(APIView):
         """Update customer details, all or partial."""
 
         customer = self.get_object(customerid)
-        serializer = CustomerSerializer(customer, data=request.data, partial=True)
+        serializer = CustomerSerializer(customer, data=request.data,
+                                        partial=True)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST, safe=False)
+        return JsonResponse(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST, safe=False)
 
     def delete(self, request, customerid):
         """Delete customer details."""
@@ -152,9 +167,12 @@ class CustomerDetails(APIView):
         lastname = request.data.get('lastname', None)
         name = request.data.get('name', None)
         address = request.data.get('address', None)
-        customer = self.get_customer_by_name_and_address(lastname, name, address)
-        serializer = CustomerSerializer(customer, data=request.data, partial=True)
+        customer = self.get_customer_by_name_and_address(lastname,
+                                                         name, address)
+        serializer = CustomerSerializer(customer,
+                                        data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST, safe=False)
+        return JsonResponse(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST, safe=False)
