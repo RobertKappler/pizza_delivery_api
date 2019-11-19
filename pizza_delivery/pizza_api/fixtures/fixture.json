@@ -1,0 +1,32 @@
+ [
+   {"model" : "pizza_api.Customer",
+    "pk": "63e11a27-60f6-4815-9c18-b9e348588d91",
+     "fields":{
+        "lastname": "Kappler",
+       "name": "Robert",
+       "address": "here",
+       "created_at": "2019-11-15 17:38:44+01"
+     }
+   },
+   {"model" : "pizza_api.Item",
+    "pk": "77250eef-97a3-4db8-9023-cb6a4dcc3d65",
+     "fields":
+            {
+                "id": "77250eef-97a3-4db8-9023-cb6a4dcc3d65",
+                "size": 30,
+                "quantity": 1,
+                "order_id": "0247c292-63b0-4395-ae11-f60241680244",
+                "flavour": "salami"
+
+            }
+   },
+
+   { "model" : "pizza_api.Orders",
+    "pk": "0247c292-63b0-4395-ae11-f60241680244",
+      "fields":{
+        "status": 1,
+        "customer_id": "63e11a27-60f6-4815-9c18-b9e348588d91",
+        "created_at": "2019-11-15 17:38:44+01"
+  }
+
+  }]
