@@ -8,7 +8,6 @@ class Customer(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     lastname = models.CharField(max_length=150)
     name = models.CharField(max_length=150)
-    age = models.IntegerField()
     address = models.CharField(max_length=150)
     created_at = models.DateTimeField()
 
@@ -21,8 +20,7 @@ class Orders (models.Model):
         (0, 'Order received'),
         (1, 'Order will be processed'),
         (2, 'Order will be shipped'),
-        (3, 'Order delivered'),
-        (-1, 'Order canceled')
+        (3, 'Order delivered')
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -55,4 +53,4 @@ class Item(models.Model):
     price = models.FloatField(default=0)
 
     def __str__(self):
-        return f'{self.order_id} - {self.quantity} - {self.size}'
+        return f'{self.order_id} - {self.quantity} - {self.size} - {self.id}'
