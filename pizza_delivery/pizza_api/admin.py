@@ -6,4 +6,3 @@ from .models import Customer, Orders, Item
 admin.site.register(Customer)
 admin.site.register(Orders)
 admin.site.register(Item)
-
